@@ -21,7 +21,7 @@ export default function RootLayout({
           <Header />
           {children}
           <Footer />
-          {/* корінь для порталу модалки */}
+
           <div id="modal-root" />
         </TanStackProvider>
       </body>
