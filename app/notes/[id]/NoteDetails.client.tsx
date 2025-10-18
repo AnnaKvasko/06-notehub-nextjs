@@ -7,8 +7,8 @@ import type { Note } from '@/types/note';
 import css from './NoteDetails.module.css';
 
 export default function NoteDetailsClient() {
-  const params = useParams<{ id: string }>();
-  const id = Number(params.id);
+  const { id: idParam } = useParams<{ id: string | string[] }>();
+  const id = Array.isArray(idParam) ? idParam[0] : idParam;
 
   const {
     data: note,
@@ -17,6 +17,7 @@ export default function NoteDetailsClient() {
   } = useQuery<Note>({
     queryKey: ['note', id],
     queryFn: () => fetchNoteById(id),
+    enabled: Boolean(id),
   });
 
   if (isLoading) return <p>Loading, please wait...</p>;

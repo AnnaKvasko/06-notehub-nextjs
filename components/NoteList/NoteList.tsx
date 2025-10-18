@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -25,16 +24,13 @@ export default function NoteList({
   const qc = useQueryClient();
   const [deletingId, setDeletingId] = useState<number | string | null>(null);
 
- 
   const listKey = ['notes', { page, search, perPage }] as const;
 
   const { mutate } = useMutation({
     mutationFn: (id: number | string) => deleteNote({ id }),
-
     onMutate: async (id) => {
       setDeletingId(id);
       await qc.cancelQueries({ queryKey: listKey });
-
       const prevData = qc.getQueryData<NotesListResponse>(listKey);
 
       if (prevData) {
@@ -42,7 +38,6 @@ export default function NoteList({
           (n) => String(n.id) !== String(id),
         );
 
-        
         const approxTotalBefore = prevData.totalPages * perPage;
         const approxTotalAfter = Math.max(0, approxTotalBefore - 1);
         const nextTotalPages = Math.max(
@@ -59,40 +54,33 @@ export default function NoteList({
 
       return { prevData };
     },
-
     onError: (_err, _id, ctx) => {
-      if (ctx?.prevData) {
+      if (ctx?.prevData)
         qc.setQueryData<NotesListResponse>(listKey, ctx.prevData);
-      }
       setDeletingId(null);
     },
-
     onSuccess: () => {
-      
       qc.invalidateQueries({ queryKey: ['notes'] });
     },
-
     onSettled: () => setDeletingId(null),
   });
 
   return (
     <ul className={css.list}>
       {notes.map((n) => (
-        <li key={n.id} className={css.item}>
+        <li key={n.id} className={css.listItem}>
           <h3 className={css.title}>{n.title}</h3>
           <p className={css.content}>{n.content}</p>
-
-         
           <p className={css.tag}>Tag: {n.tag ?? '-'}</p>
 
-          <div className={css.actions}>
+          <div className={css.footer}>
             <Link href={`/notes/${n.id}`} className={css.link}>
               View details
             </Link>
 
             <button
               type="button"
-              className={css.deleteBtn}
+              className={css.button}
               onClick={() => mutate(n.id)}
               disabled={String(deletingId) === String(n.id)}
               aria-busy={String(deletingId) === String(n.id)}

@@ -18,8 +18,16 @@ export default function Pagination({
     <nav className={className} aria-label="Pagination">
       <ReactPaginate
         containerClassName={css.pagination}
+        pageClassName={css.page}
+        pageLinkClassName={css.pageLink}
         activeClassName={css.active}
-        disabledClassName={css.disabled ?? ''}
+        previousClassName={css.page}
+        previousLinkClassName={css.pageLink}
+        nextClassName={css.page}
+        nextLinkClassName={css.pageLink}
+        breakClassName={css.page}
+        breakLinkClassName={css.pageLink}
+        disabledClassName={css.disabled}
         previousLabel="‹ Prev"
         nextLabel="Next ›"
         breakLabel="…"
