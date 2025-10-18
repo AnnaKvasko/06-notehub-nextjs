@@ -1,45 +1,53 @@
-import { useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import css from './Modal.module.css';
+'use client';
 
-interface Props {
+import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+
+type Props = {
   open: boolean;
   onClose: () => void;
   children: React.ReactNode;
-}
-
-const modalRoot = document.getElementById('modal-root') || document.body;
+};
 
 export default function Modal({ open, onClose, children }: Props) {
+  const containerRef = useRef<HTMLElement | null>(null);
+  const [mounted, setMounted] = useState(false);
   useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
+    containerRef.current =
+      document.getElementById('modal-root') ?? document.body;
+    setMounted(true);
+  }, []);
 
-  useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [open]);
-
-  if (!open) return null;
+  if (!open || !mounted || !containerRef.current) return null;
 
   return createPortal(
     <div
-      className={css.backdrop}
       role="dialog"
       aria-modal="true"
       onClick={onClose}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(0,0,0,.4)',
+        display: 'grid',
+        placeItems: 'center',
+        zIndex: 1000,
+      }}
     >
-      <div className={css.modal} onClick={(e) => e.stopPropagation()}>
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: '#fff',
+          borderRadius: 8,
+          padding: 16,
+          minWidth: 320,
+          maxWidth: '90vw',
+          boxShadow: '0 6px 20px rgba(0,0,0,.2)',
+        }}
+      >
         {children}
       </div>
     </div>,
-    modalRoot,
+    containerRef.current,
   );
 }

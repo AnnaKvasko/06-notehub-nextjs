@@ -1,20 +1,18 @@
-
-import axios, { type AxiosInstance, type AxiosResponse } from "axios";
-import type { Note, NoteTag } from "@/types/note";
-
+import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
+import type { Note, NoteTag } from '@/types/note';
 
 const API_BASE =
-  process.env.NEXT_PUBLIC_NOTEHUB_API ?? "https://notehub-public.goit.study/api";
+  process.env.NEXT_PUBLIC_NOTEHUB_API ??
+  'https://notehub-public.goit.study/api';
 const TOKEN = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
 
 export const api: AxiosInstance = axios.create({
   baseURL: API_BASE,
-  headers: { "Content-Type": "application/json" },
+  headers: { 'Content-Type': 'application/json' },
 });
 
-
 api.interceptors.request.use((config) => {
-  const t = (TOKEN ?? "").toString().trim();
+  const t = (TOKEN ?? '').toString().trim();
   if (t) {
     config.headers = config.headers ?? {};
     config.headers.Authorization = `Bearer ${t}`;
@@ -40,17 +38,17 @@ export interface CreateNoteParams {
 }
 
 export interface DeleteNoteParams {
-  id: number | string; 
+  id: number | string;
 }
 
 export async function fetchNotes(
   { page, perPage, search }: FetchNotesParams,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<NotesListResponse> {
   const params: Record<string, string | number> = { page, perPage };
   if (search && search.trim()) params.search = search.trim();
 
-  const res: AxiosResponse<NotesListResponse> = await api.get("/notes", {
+  const res: AxiosResponse<NotesListResponse> = await api.get('/notes', {
     params,
     signal,
   });
@@ -59,7 +57,7 @@ export async function fetchNotes(
 
 export async function fetchNoteById(
   id: number | string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<Note> {
   const res: AxiosResponse<Note> = await api.get(`/notes/${id}`, { signal });
   return res.data;
@@ -67,17 +65,16 @@ export async function fetchNoteById(
 
 export async function createNote(
   body: CreateNoteParams,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<Note> {
-  const res: AxiosResponse<Note> = await api.post("/notes", body, { signal });
+  const res: AxiosResponse<Note> = await api.post('/notes', body, { signal });
   return res.data;
 }
 
 export async function deleteNote(
   { id }: DeleteNoteParams,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<Note> {
   const res: AxiosResponse<Note> = await api.delete(`/notes/${id}`, { signal });
   return res.data;
 }
-

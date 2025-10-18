@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { fetchNotes, type NotesListResponse } from '@/lib/api';
 import NoteList from '@/components/NoteList/NoteList';
 import SearchBox from '@/components/SearchBox/SearchBox';
-import Loader from '@/components/Loader/Loader';
+
 import QueryError from '@/components/QueryError/QueryError';
 import Pagination from '@/components/Pagination/Pagination';
 import Modal from '@/components/Modal/Modal';
@@ -33,13 +33,11 @@ export default function NotesClient({
   const [debouncedSearch] = useDebounce(search, 400);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  
   useEffect(() => {
     const p = Number(params.get('page') ?? initialPage);
     const s = params.get('search') ?? initialSearch;
     if (p !== page) setPage(p);
     if (s !== search) setSearch(s);
-  
   }, [params]);
 
   const queryKey = [
@@ -52,7 +50,7 @@ export default function NotesClient({
       queryKey,
       queryFn: ({ signal }) =>
         fetchNotes({ page, perPage, search: debouncedSearch }, signal),
-     
+
       placeholderData: (prev) => prev,
     });
 
@@ -61,10 +59,8 @@ export default function NotesClient({
 
   useEffect(() => {
     if (page > pages && pages > 0) {
-      
       onPageChange(1);
     }
-    
   }, [pages]);
 
   const onPageChange = (nextPage: number) => {
@@ -116,7 +112,6 @@ export default function NotesClient({
         </div>
       </header>
 
-      {isLoading && <Loader />}
       {isError && <QueryError error={error} />}
 
       {isFetching && !isLoading && (

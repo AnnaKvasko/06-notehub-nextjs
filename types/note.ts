@@ -1,14 +1,22 @@
+export const TAGS = [
+  'Todo',
+  'Work',
+  'Personal',
+  'Meeting',
+  'Shopping',
+] as const;
+
+export type NoteTag = (typeof TAGS)[number];
+
 export interface Note {
   id: number;
   title: string;
   content: string;
-  tag?: string;
+  tag: NoteTag;
   createdAt: string;
 }
 
 export interface PaginatedNotesResponse {
-  items: Note[];
-  total: number;
-  page: number;
-  perPage: number;
+  notes: Note[];
+  totalPages: number;
 }

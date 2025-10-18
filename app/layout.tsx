@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import '../app/globals.css';
+import './globals.css';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
 import TanStackProvider from '@/components/TanStackProvider/TanStackProvider';
@@ -21,6 +21,8 @@ export default function RootLayout({
           <Header />
           {children}
           <Footer />
+          {/* корінь для порталу модалки */}
+          <div id="modal-root" />
         </TanStackProvider>
       </body>
     </html>
