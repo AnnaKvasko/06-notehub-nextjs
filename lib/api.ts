@@ -1,6 +1,6 @@
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import type { Note, NoteTag } from '@/types/note';
-import type { NotesListResponse } from '@/lib/api/types';
+import type { NotesListResponse } from '@/lib/types';
 
 const API_BASE =
   process.env.NEXT_PUBLIC_NOTEHUB_API ??

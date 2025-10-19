@@ -10,7 +10,7 @@ import {
 } from 'formik';
 import * as Yup from 'yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createNote, type CreateNoteParams } from '@/lib/api/api';
+import { createNote, type CreateNoteParams } from '@/lib/api';
 import type { Note, NoteTag } from '@/types/note';
 import { TAGS } from '@/types/note';
 import css from './NoteForm.module.css';
