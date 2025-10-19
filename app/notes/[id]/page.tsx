@@ -11,14 +11,20 @@ type PageProps = {
 };
 
 export default async function NoteDetailsPage({ params }: PageProps) {
-  const p = await params;
-  const id = p.id;
+  const { id } = await params;
 
-  const qc = new QueryClient();
-  await qc.prefetchQuery({
-    queryKey: ['note', id],
-    queryFn: () => fetchNoteById(id),
+  const qc = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
   });
+
+  if (id) {
+    try {
+      await qc.prefetchQuery({
+        queryKey: ['note', id],
+        queryFn: () => fetchNoteById(id),
+      });
+    } catch {}
+  }
 
   return (
     <HydrationBoundary state={dehydrate(qc)}>

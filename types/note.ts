@@ -5,18 +5,13 @@ export const TAGS = [
   'Meeting',
   'Shopping',
 ] as const;
-
 export type NoteTag = (typeof TAGS)[number];
 
 export interface Note {
-  id: number;
+  id: string;
   title: string;
   content: string;
   tag: NoteTag;
   createdAt: string;
-}
-
-export interface PaginatedNotesResponse {
-  notes: Note[];
-  totalPages: number;
+  updatedAt: string;
 }

@@ -13,15 +13,25 @@ type PageProps = {
 export default async function NotesPage({ searchParams }: PageProps) {
   const sp = await searchParams;
 
-  const page = Number(sp.page ?? 1);
-  const search = sp.search ?? '';
+  const pageRaw = sp.page;
+  const pageNum = Number(pageRaw);
+  const page = Number.isFinite(pageNum) && pageNum > 0 ? pageNum : 1;
+
+  const search = (sp.search ?? '').toString();
   const perPage = 12;
 
-  const qc = new QueryClient();
-  await qc.prefetchQuery({
-    queryKey: ['notes', { page, search, perPage }],
-    queryFn: () => fetchNotes({ page, perPage, search }),
+  const qc = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+    },
   });
+
+  try {
+    await qc.prefetchQuery({
+      queryKey: ['notes', { page, search, perPage }],
+      queryFn: () => fetchNotes({ page, perPage, search }),
+    });
+  } catch {}
 
   return (
     <HydrationBoundary state={dehydrate(qc)}>

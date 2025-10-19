@@ -8,7 +8,6 @@ type Props = {
   open: boolean;
   onClose: () => void;
   children: React.ReactNode;
-
   labelledById?: string;
 };
 
@@ -52,12 +51,15 @@ export default function Modal({
 
   if (!open || !mounted || !containerRef.current) return null;
 
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) onClose();
+  };
+
   return createPortal(
     <div
       className={css.backdrop}
       role="presentation"
-      onClick={onClose}
-      aria-hidden="true"
+      onClick={handleBackdropClick}
     >
       <div
         ref={dialogRef}
@@ -65,7 +67,6 @@ export default function Modal({
         aria-modal="true"
         aria-labelledby={labelledById}
         className={css.modal}
-        onClick={(e) => e.stopPropagation()}
         tabIndex={-1}
       >
         {children}

@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { fetchNotes, type NotesListResponse } from '@/lib/api';
+import { fetchNotes } from '@/lib/api';
+import type { NotesListResponse } from '@/lib/api/types';
 import NoteList from '@/components/NoteList/NoteList';
 import SearchBox from '@/components/SearchBox/SearchBox';
-
 import QueryError from '@/components/QueryError/QueryError';
 import Pagination from '@/components/Pagination/Pagination';
 import Modal from '@/components/Modal/Modal';
@@ -34,11 +34,15 @@ export default function NotesClient({
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const p = Number(params.get('page') ?? initialPage);
+    const pRaw = params.get('page');
+    const pNum = Number(pRaw);
+    const p = Number.isFinite(pNum) && pNum > 0 ? pNum : initialPage;
+
     const s = params.get('search') ?? initialSearch;
+
     if (p !== page) setPage(p);
     if (s !== search) setSearch(s);
-  }, [params]);
+  }, [params, initialPage, initialSearch, page, search]);
 
   const queryKey = [
     'notes',
@@ -59,9 +63,13 @@ export default function NotesClient({
 
   useEffect(() => {
     if (page > pages && pages > 0) {
-      onPageChange(1);
+      const sp = new URLSearchParams(params);
+      sp.set('page', '1');
+      if (search) sp.set('search', search);
+      else sp.delete('search');
+      router.replace(`/notes?${sp.toString()}`);
     }
-  }, [pages]);
+  }, [pages, page, params, router, search]);
 
   const onPageChange = (nextPage: number) => {
     const sp = new URLSearchParams(params);
@@ -76,11 +84,11 @@ export default function NotesClient({
     if (val) sp.set('search', val);
     else sp.delete('search');
     sp.set('page', '1');
-    router.push(`/notes?${sp.toString()}`);
+    router.replace(`/notes?${sp.toString()}`);
   };
 
   return (
-    <div className={css.app}>
+    <div className={css.app} aria-busy={isFetching && !isLoading}>
       <header className={css.toolbar}>
         <div className={css.left}>
           <SearchBox
@@ -126,7 +134,6 @@ export default function NotesClient({
             search={debouncedSearch}
             perPage={perPage}
           />
-
           {pages > 1 && (
             <Pagination
               pageCount={pages}
