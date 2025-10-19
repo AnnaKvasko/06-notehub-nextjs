@@ -1,5 +1,6 @@
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import type { Note, NoteTag } from '@/types/note';
+import type { NotesListResponse } from '@/lib/api/types';
 
 const API_BASE =
   process.env.NEXT_PUBLIC_NOTEHUB_API ??
@@ -26,11 +27,6 @@ export interface FetchNotesParams {
   search?: string;
 }
 
-export interface NotesListResponse {
-  notes: Note[];
-  totalPages: number;
-}
-
 export interface CreateNoteParams {
   title: string;
   content: string;
@@ -38,7 +34,7 @@ export interface CreateNoteParams {
 }
 
 export interface DeleteNoteParams {
-  id: number | string;
+  id: string;
 }
 
 export async function fetchNotes(
@@ -46,7 +42,7 @@ export async function fetchNotes(
   signal?: AbortSignal,
 ): Promise<NotesListResponse> {
   const params: Record<string, string | number> = { page, perPage };
-  if (search && search.trim()) params.search = search.trim();
+  if (search?.trim()) params.search = search.trim();
 
   const res: AxiosResponse<NotesListResponse> = await api.get('/notes', {
     params,
@@ -56,7 +52,7 @@ export async function fetchNotes(
 }
 
 export async function fetchNoteById(
-  id: number | string,
+  id: string,
   signal?: AbortSignal,
 ): Promise<Note> {
   const res: AxiosResponse<Note> = await api.get(`/notes/${id}`, { signal });

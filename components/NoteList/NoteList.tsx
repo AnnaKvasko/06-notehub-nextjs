@@ -100,7 +100,7 @@ import Link from 'next/link';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Note } from '@/types/note';
 import type { NotesListResponse } from '@/lib/api/types'; // ← було '@/lib/api'
-import { deleteNote } from '@/lib/api';
+import { deleteNote } from '@/lib/api/api';
 import css from './NoteList.module.css';
 
 export interface NoteListProps {
